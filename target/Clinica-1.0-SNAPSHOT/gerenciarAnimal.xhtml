@@ -1,0 +1,122 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml"
+      xmlns:h="http://xmlns.jcp.org/jsf/html"
+      xmlns:p="http://primefaces.org/ui"
+      xmlns:f="http://xmlns.jcp.org/jsf/core">
+
+    <h:head>
+        <title>Sem título</title>
+    </h:head>
+    <h:body > 
+        <h:panelGrid columns="2" style="width: 100%; text-align: right;">
+            <h:form id="formVoltar" >                   
+                <p:commandLink  action="menu" value="Voltar ao menu" />
+            </h:form>
+        </h:panelGrid>
+
+        <p:fieldset legend="Novo Animal" toggleable="true"  collapsed="true" >
+            <h:form id="formNovo" >
+                <h:panelGrid columns="2">
+                    
+                    <h:outputLabel value="Tutor:  " />
+                    <p:selectOneMenu id="comboTutor" converter="tutorConverter" 
+                                     required="true" requiredMessage="Selecione um tutor"  
+                                     value="#{gerenciarAnimalControle.animal.tutor}" >
+                        <f:selectItem itemValue="#{null}" itemLabel="Escolha um tutor" 
+                                      noSelectionOption="false"/>
+                        <f:selectItems value="#{gerenciarAnimalControle.listaTutores}" 
+                                       var="tut"
+                                       itemValue="#{tut}"
+                                       itemLabel="#{tut.nome}"/>
+                    </p:selectOneMenu>
+                    
+                     <h:outputLabel value="Nome:  " />
+                     <p:inputText value="#{gerenciarAnimalControle.animal.nome}"/>
+                     
+                     <h:outputLabel value="Classe:  " />
+                     <p:inputText value="#{gerenciarAnimalControle.animal.classe}"/>
+                     
+                     <p:commandButton value="cancelar" immediate="true" action="menu"/>
+                    <p:commandButton value="salvar" 
+                                     action="#{gerenciarAnimalControle.salvar()}"
+                                     update="formNovo, :formTabela" />
+                     
+
+                </h:panelGrid>  
+            </h:form>
+        </p:fieldset>
+        
+        
+        <h:form id="formTabela">  
+            <p:dataTable id="tabelaAnimal"  
+                         value="#{gerenciarAnimalControle.listaAnimal}" 
+                         var="item"
+                         lazy="true"
+                         emptyMessage="Nenhum animal cadastrado"
+                         tableStyle="width:auto;  min-width: 100%" >
+
+                <p:column headerText="Código">
+                    <h:outputText value="#{item.codigo}"/>
+                </p:column>
+              
+                <p:column headerText="Nome">
+                    <h:outputText value="#{item.nome}"/>
+                </p:column>
+             
+                <p:column headerText="Alterar"> 
+                    <p:commandLink value="alterar"
+                                   action="#{gerenciarAnimalControle.alterar(item)}"
+                                   update="formTabela, :formAlteracao"/>
+                </p:column>
+                <p:column headerText="Excluir"> 
+                    <p:commandLink value="excluir" 
+                                   action="#{gerenciarAnimalControle.excluir(item)}" 
+                                   update="formTabela">
+                        <p:confirm header="Excluir animal" message="Você tem certeza que deseja excluir este animal?" 
+                                   icon="ui-icon-alert"/>
+                    </p:commandLink>
+                </p:column>
+
+            </p:dataTable>
+            
+             <p:confirmDialog global="true" showEffect="fade" hideEffect="fade">
+                <p:outputPanel style="width: 100%; text-align:center" layout="block"> 
+                    <p:commandButton value="sim" type="button" styleClass="ui-confirmdialog-yes"  />
+                    <p:commandButton value="não" type="button" styleClass="ui-confirmdialog-no"  />
+                </p:outputPanel>
+            </p:confirmDialog>
+            </h:form>
+            
+        <h:form id="formAlteracao">
+            <p:dialog widgetVar="popupAlteracao" width="50%" modal="true"
+                      header="Alteração"
+                      visible="#{gerenciarAnimalControle.mostraPopupAlteracao}">
+            <h:panelGrid columns="2">
+                <h:outputLabel value="Código:  " />
+                <p:inputText id="codigo2"  disabled="true"
+                             value="#{gerenciarAnimalControle.animal.codigo}"/>
+                <h:outputLabel value="Nome:  " />
+                <p:inputText id="nome2" 
+                             value="#{gerenciarAnimalControle.animal.nome}"/>
+                 <h:outputLabel value="Classe:  " />
+                <p:inputText id="classe2" 
+                             value="#{gerenciarAnimalControle.animal.classe}"/>
+                
+                <p:commandButton value="cancelar" immediate="true" 
+                                 action="#{gerenciarAnimalControle.fecharPopupAlteracao()}"
+                                 update="formAlteracao"/>   
+                <p:commandButton value="salvar" 
+                                 action="#{gerenciarAnimalControle.salvarAlteracao()}"
+                                 update="formAlteracao, :formTabela" />
+
+
+            </h:panelGrid>
+            <p:messages showIcon="false" closable="true"/>
+
+        </p:dialog>
+
+        </h:form>
+        
+    </h:body>
+</html>
